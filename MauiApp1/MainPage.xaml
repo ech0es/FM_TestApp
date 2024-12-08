@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mauiApp1="clr-namespace:MauiApp1"
+             xmlns:viewModels="clr-namespace:MauiApp1.ViewModels"
+             xmlns:converters="clr-namespace:MauiApp1.Converters"
+             Shell.NavBarIsVisible="False"
+             Background="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Black}}"
+             x:Class="MauiApp1.MainPage">
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.BindingContext>
+        <viewModels:ItemListMockViewModel/>
+    </ContentPage.BindingContext>
+    
+    <Grid VerticalOptions="Fill">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Grid
+            Grid.Row="0"
+            HeightRequest="36"
+            HorizontalOptions="Fill"
+            Background="#50545B">
+            <HorizontalStackLayout
+                Spacing="4"
+                VerticalOptions="Center"
+                HorizontalOptions="Center">
+                <Path 
+                    Height="30"
+                    Width="30"
+                    Fill="#F5BF54"
+                    Margin="0, 1, 0, 0"
+                    Data="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM8.58579 8.58579C8 9.17157 8 10.1144 8 12C8 13.8856 8 14.8284 8.58579 15.4142C9.17157 16 10.1144 16 12 16C13.8856 16 14.8284 16 15.4142 15.4142C16 14.8284 16 13.8856 16 12C16 10.1144 16 9.17157 15.4142 8.58579C14.8284 8 13.8856 8 12 8C10.1144 8 9.17157 8 8.58579 8.58579Z" />
+                <Label
+                    Style="{StaticResource ScoreLabel}"
+                    Text="2 750"/>
+                <Image Height="26"
+                       Width="26"
+                       Margin="10, 0, 0, 0"
+                       Source="../Images/token.png"/>
+                <Label
+                    Style="{StaticResource ScoreLabel}"
+                    Text="0"/>
+                <Path 
+                    Height="30"
+                    Width="30"
+                    Fill="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}"
+                    Margin="0, 2, 0, 0"
+                    Data="M13 9C13 8.44772 12.5523 8 12 8C11.4477 8 11 8.44772 11 9V11H9C8.44772 11 8 11.4477 8 12C8 12.5523 8.44772 13 9 13H11V15C11 15.5523 11.4477 16 12 16C12.5523 16 13 15.5523 13 15V13H15C15.5523 13 16 12.5523 16 12C16 11.4477 15.5523 11 15 11H13V9ZM2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12Z" />
+            </HorizontalStackLayout>
+        </Grid>
+        
+        <Border
+            Grid.Row="1"
+            StrokeThickness="0"
+            BackgroundColor="#5F6266"
+            HeightRequest="80">
+            <CollectionView
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                ItemsSource="{Binding Items}"
+                ItemsLayout="HorizontalList"
+                Background="Transparent">
+                  <CollectionView.ItemTemplate>
+                      <DataTemplate x:DataType="viewModels:ItemViewModel">
+                          <Grid
+                              Margin="16, 6">
+                              <Image 
+                                  Source="{Binding Thumbnail}">
+                                  <Image.Style>
+                                      <Style TargetType="Image">
+                                          <Setter Property="Opacity" Value="1"/>
+                                          <Style.Triggers>
+                                              <DataTrigger TargetType="Image" Binding="{Binding IsLocked}" Value="True">
+                                                  <Setter Property="Opacity" Value="0.2"/>
+                                              </DataTrigger>
+                                          </Style.Triggers>
+                                      </Style>
+                                  </Image.Style>
+                              </Image>
+                              <Image
+                                  VerticalOptions="End"
+                                  HorizontalOptions="End"
+                                  Margin="0,0,0,8"
+                                  Source="../Images/lock.png" IsVisible="{Binding IsLocked}"/>
+                              <Button 
+                                  VerticalOptions="Fill"
+                                  HorizontalOptions="Fill"
+                                  BackgroundColor="Transparent"
+                                  BorderWidth="0"
+                                  Command="{Binding Path=BindingContext.SelectItemCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                  CommandParameter="{Binding}"/>
+                          </Grid>
+                      </DataTemplate>
+                  </CollectionView.ItemTemplate>
+              </CollectionView>
+        </Border>
+        
+        <mauiApp1:CarouselWithButtonsView
+            Grid.Row="2"
+            Items="{Binding Items}"
+            CurrentItem="{Binding SelectedItem, Mode=TwoWay}"/>
+        
+        <Grid 
+            Grid.Row="3"
+            HorizontalOptions="Center"
+            VerticalOptions="Start">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label 
+                Grid.Row="0"
+                HorizontalOptions="Center"
+                Margin="0,22,0,12"
+                Text="{Binding SelectedItem.Name}"
+                FontSize="36"
+                HorizontalTextAlignment="Center"
+                TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}"/>
+            <Label Grid.Row="1"
+                   HorizontalOptions="Center"
+                   Margin="12,0"
+                   Text="{Binding SelectedItem.Description}"
+                   FontSize="16"
+                   LineBreakMode="WordWrap"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray400}}"/>
+        </Grid>
+        
+        <Button
+            Grid.Row="4"
+            Margin="12,6"
+            IsEnabled="{Binding SelectedItem.IsLocked, Converter={StaticResource InvertedBoolConverter}}"
+            Text="PICK UP"/>
+    </Grid>
+</ContentPage>
